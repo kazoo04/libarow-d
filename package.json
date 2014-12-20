@@ -1,0 +1,10 @@
+{
+  "name":         "libarow",
+  "description",  "D implementation of AROW linear classification algorithm",
+  "authors":      ["Kazuya Gokita"],
+  "homepage":     "https://github.com/kazoo04/libarow-d",
+  "license":      "MIT license",
+  "importPaths":  ["src"],
+  "targetType":   "library"
+}
+
