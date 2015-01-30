@@ -33,31 +33,6 @@ class Arow {
 
 
     /**
-     * Calculate the distance between a vector and the hyperplane
-     * Params:
-     *  f = feature
-     *
-     * Returns: Margin(Euclidean distance)
-     */
-    double getMargin(in double[int] f) @trusted
-    in {
-      assert(f != null);
-    }
-    out(margin) {
-      assert(margin != double.nan);
-      assert(margin != double.nan && margin != -double.infinity);
-    }
-    body {
-      double margin = 0.0;
-      foreach(index; f.keys) {
-        margin += mean[index] * f[index];
-      }
-
-      return margin;
-    }
-
-
-    /**
      * Calculate confidence
      * Params:
      *  f = feature
@@ -144,6 +119,31 @@ class Arow {
 
 
     /**
+     * Calculate the distance between a vector and the hyperplane
+     * Params:
+     *  f = feature
+     *
+     * Returns: Margin(Euclidean distance)
+     */
+    double getMargin(in double[int] f) @trusted
+    in {
+      assert(f != null);
+    }
+    out(margin) {
+      assert(margin != double.nan);
+      assert(margin != double.nan && margin != -double.infinity);
+    }
+    body {
+      double margin = 0.0;
+      foreach(index; f.keys) {
+        margin += mean[index] * f[index];
+      }
+
+      return margin;
+    }
+
+
+    /**
      * Predict
      * Params:
      *  f = feature vector
@@ -160,5 +160,6 @@ class Arow {
       double m = getMargin(f);
       return m > 0 ? 1 : -1;
     }
+
 }
 
