@@ -4,7 +4,6 @@
   "authors":      ["Kazuya Gokita"],
   "homepage":     "https://github.com/kazoo04/libarow-d",
   "license":      "MIT license",
-  "importPaths":  ["src"],
   "targetType":   "library"
 }
 
