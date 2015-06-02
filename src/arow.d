@@ -93,6 +93,14 @@ class Arow {
       r = param;
     }
 
+    
+    this(size_t size, double[] mean, double[] cov, double hyperparameter) {
+      this.dimension = size;
+      this.mean      = mean;
+      this.cov       = cov;
+      this.r         = hyperparameter;
+    }
+
 
     @property {
       auto dim() { return dimension; }
@@ -159,6 +167,117 @@ class Arow {
     body {
       double m = getMargin(f);
       return m > 0 ? 1 : -1;
+    }
+
+
+    /**
+     * Write AROW data to the specified file
+     * Params:
+     *  filename = output path
+     */
+    void saveArow(in immutable string filename)
+    in {
+      assert(filename != null);
+    }
+    body
+    {
+      import std.stream;
+      auto buffer = new BufferedFile();
+      buffer.create(filename);
+      buffer.write(dimension);
+      buffer.write(r);
+      foreach (m; mean) buffer.write(m);
+      foreach (c; cov)  buffer.write(c);
+      buffer.close();
+    }
+
+
+    /**
+     * Load AROW data from the specified file
+     * Params:
+     *  filename = output path
+     *
+     * Returns: Arow instance
+     */
+    Arow loadArowFile(in string filename)
+    {
+      import std.stream;
+      Stream file = new BufferedFile(filename);
+      scope(exit) file.close();
+
+      size_t size;
+      file.read(size);
+
+      double hyperparameter;
+      file.read(hyperparameter);
+
+      double[] mean = new double[size];
+      for (size_t i = 0; i < size; i++) file.read(mean[i]);
+
+      double[] cov = new double[size];
+      for (size_t i = 0; i < size; i++) file.read(cov[i]);
+
+      return new Arow(size, mean, cov, hyperparameter);
+    }
+
+
+    Arow opBinary(string op)(Arow b) {
+      static if(op != "+") static assert(0, "Operator " ~ op ~ " not implemented");
+
+      if(this.dimension != b.dimension) {
+        throw new Exception("Vectors must be the same length");
+      }
+
+      auto arow = new Arow(dimension, r);
+
+      for (size_t i = 0; i < dimension; i++) {
+        arow.mean[i] = (mean[i] + b.mean[i]) / 2;
+        arow.cov[i] = (cov[i] + b.cov[i]) / 2;
+      }
+
+      return arow;
+    }
+
+    unittest {
+      double[] a_m = [1, 2, 3], a_c = [4, 5, 6];
+      double[] b_m = [7, 8, 9], b_c = [10, 11, 12];
+
+      Arow a = new Arow(3, a_m, a_c, 1);
+      Arow b = new Arow(3, b_m, b_c, 1);
+
+      Arow c = a + b;
+      assert(c.mean[0] == 4);
+      assert(c.mean[1] == 5);
+      assert(c.mean[2] == 6);
+    }
+
+
+    Arow opOpAssign(string op)(Arow b) {
+      static if(op != "+") static assert(0, "Operator " ~ op ~ " not implemented");
+
+      if(this.dimension != b.dimension) {
+        throw new Exception("Vectors must be the same length");
+      }
+
+      for (size_t i = 0; i < dimension; i++) {
+        mean[i] = (mean[i] + b.mean[i]) / 2;
+        cov[i] = (cov[i] + b.cov[i]) / 2;
+      }
+
+      return this;
+    }
+
+    unittest {
+      double[] a_m = [1, 2, 3], a_c = [4, 5, 6];
+      double[] b_m = [7, 8, 9], b_c = [10, 11, 12];
+
+      Arow a = new Arow(3, a_m, a_c, 1);
+      Arow b = new Arow(3, b_m, b_c, 1);
+
+      a += b;
+      assert(a.mean[0] == 4);
+      assert(a.mean[1] == 5);
+      assert(a.mean[2] == 6);
     }
 }
 
