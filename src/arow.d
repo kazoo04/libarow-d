@@ -221,8 +221,7 @@ class Arow {
     }
 
 
-    Arow opBinary(string op)(Arow b) {
-      static if(op != "+") static assert(0, "Operator " ~ op ~ " not implemented");
+    Arow opBinary(string op)(Arow b) if (op == "+") {
 
       if(this.dimension != b.dimension) {
         throw new Exception("Vectors must be the same length");
@@ -252,8 +251,7 @@ class Arow {
     }
 
 
-    Arow opOpAssign(string op)(Arow b) {
-      static if(op != "+") static assert(0, "Operator " ~ op ~ " not implemented");
+    Arow opOpAssign(string op)(Arow b) if (op == "+") {
 
       if(this.dimension != b.dimension) {
         throw new Exception("Vectors must be the same length");
