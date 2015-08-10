@@ -116,7 +116,7 @@ class Arow {
     /**
      * Update weight vector
      * Params:
-     *  fv    = feature
+     *  f     = feature
      *  label = class label (+1 / -1)
      *
      * Returns: loss (0 / 1)
